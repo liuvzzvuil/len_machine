@@ -3,24 +3,24 @@
 
 # kNN k阶临近值算法
 
-from numpy import *
+import numpy as np
 import operator
 import collections
 def createDtaSet():
-    group = array([[1., 1.1], [1., 1.], [0, 0], [0, 0.1]])
+    group = np.array([[1., 1.1], [1., 1.], [0, 0], [0, 0.1]])
     labels = ['A', 'A', 'B', 'B']
     return group, labels
 
 def classify0(inx, dataset, labels, k):
     def get_jl(inx, dataset):
         """获取距离"""
-        if not isinstance(inx, list):
-            return 9, "请确保inx中的数据类型为list类型"
-        elif not inx:
-            return 1, "没有待计算的数据"
-        l = map(lambda x: (x[0]-inx[0])**2+(x[1]-inx[1])**2, dataset)
+        if not isinstance(inx, np.ndarray):
+            return 9, "请确保inx中的数据类型为np.ndarray类型"
+        # l = map(lambda x: (x[0]-inx[0])**2+(x[1]-inx[1])**2, dataset)
+        l = (dataset - inx) ** 2
+        l = l.sum(axis=1)
         return 0, list(l)
-    code, len_xy = list(get_jl(inx, dataset))
+    code, len_xy = get_jl(inx, dataset)
     if code != 0:
         return code, len_xy
     info_len = []
@@ -36,6 +36,6 @@ def classify0(inx, dataset, labels, k):
     return count_info(aim_labels)
 
 dataset, labels = createDtaSet()
-print(classify0([1,1], dataset, labels, 2))
+print(classify0(np.array([1,1]), dataset, labels, 2))
 
 
