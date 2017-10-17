@@ -27,7 +27,8 @@ def classify0(inx, dataset, labels, k):
     # 将距离信息保存为[{索引: 值}], 方便使用list.sort(key=xxx)对其排序
     for i in range(len(len_xy)):
         info_len.append({i:len_xy[i]})
-    info_len.sort(key=lambda x: list(x.values())[0], reverse=True)
+    # info_len.sort(key=lambda x: list(x.values())[0], reverse=True)
+    info_len.sort(key=lambda x: list(x.values())[0])
     aim_labels = list(map(lambda x: list(x.keys())[0], info_len[:k]))
     def count_info(aim_list):
         """对返回的标签信息计数, 以返回最多的标签"""
@@ -35,7 +36,9 @@ def classify0(inx, dataset, labels, k):
     aim_labels = list(map(lambda x: labels[x], aim_labels))
     return count_info(aim_labels)
 
-dataset, labels = createDtaSet()
-print(classify0(np.array([1,1]), dataset, labels, 2))
+
+if __name__ == "__main__":
+    dataset, labels = createDtaSet()
+    print(classify0(np.array([1,1]), dataset, labels, 2))
 
 
