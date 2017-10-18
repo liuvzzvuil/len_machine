@@ -14,8 +14,10 @@ def get_spa_labels(path=""):
             list_data_list = [x.split() for x in each_line]
             spa_data = list(map(lambda x: [float(y) for y in x[:3]], list_data_list))
             labels = [x[-1] for x in list_data_list]
-            np_labels = np.array(labels)
-            num_labels = np.where(np_labels == 'didntLike', 0, np.where(np_labels == 'smallDoses', 1, 2))
+            # np_labels = np.array(labels)
+            # num_labels = np.where(np_labels == 'didntLike', 0, np.where(np_labels == 'smallDoses', 1, 2))
+            # 在只有1000行的情况下, 下述方法较快, 或许当数据量增大的时候会是第一个快些
+            num_labels = [0 if x == 'didntLike' else 1 if x == 'smallDoses' else 2 for x in labels]
             code, spa, labels = 0, spa_data, num_labels
         except:
             error = traceback.format_exc()

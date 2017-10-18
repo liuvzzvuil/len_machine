@@ -6,6 +6,7 @@
 import numpy as np
 import operator
 import collections
+import format_data
 def createDtaSet():
     group = np.array([[1., 1.1], [1., 1.], [0, 0], [0, 0.1]])
     labels = ['A', 'A', 'B', 'B']
@@ -98,4 +99,7 @@ if __name__ == "__main__":
     # et = time.time()
     # print("function 1: ", et - st)
     # 虽然func1 看起来较整齐并都使用了numpy包, 但是却不如第一个效率高
-    print(classify0(np.array([1, 1]), dataset, labels, 2))
+    code, dataset, labels = format_data.get_spa_labels()
+    if code != 0:
+        print(dataset, labels)
+    print(classify0(np.array([75136, 7.113469, 0.473904]), dataset, labels, 10))
