@@ -79,8 +79,6 @@ def classify1(inx, dataset, labels, k):
     return count_info(aim_labels)
 
 def self_test(dataFile_path, test_dataFile_path):
-
-
     code, dataset, labels = format_data.get_spa_labels(dataFile_path)
     if code != 0:
         return code, dataset, labels
@@ -98,6 +96,16 @@ def self_test(dataFile_path, test_dataFile_path):
     success_num = error_list.count(0)
     return success_num/len(aim_list)
 
+def test(train_spa, train_labels, test_spa, test_labels):
+    classify_p = partial(classify0, dataset=train_spa, labels=train_labels, k=10)
+    # 获取对测试数据的计算
+    aim_list = list(map(classify_p, test_spa))
+    # index_list = [x for x in range(len(aim_list))]
+    np_aim = np.array(aim_list)
+    np_test = np.array(test_labels)
+    error_list = list(np_aim - np_test)
+    success_num = error_list.count(0)
+    return success_num/len(aim_list)
 
 if __name__ == "__main__":
     dataset, labels = createDtaSet()
@@ -122,3 +130,6 @@ if __name__ == "__main__":
         print(dataset, labels)
     # print(classify0(np.array([75136, 7.113469, 0.473904]), dataset, labels, 10))
     print(self_test("data/spa_data.txt", "data/test_data.txt"))
+    code, dataset, labels = format_data.get_spa_labels("data/spa_data.txt")
+    code, test_dataset, test_labels = format_data.get_spa_labels("data/test_data.txt")
+    print(test(dataset, labels, test_dataset, test_labels))
