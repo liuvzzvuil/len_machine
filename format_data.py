@@ -24,13 +24,13 @@ def get_spa_labels(path=""):
             code, spa, labels = 9, error, ""
     return code, spa, labels
 
-def auto_norm(single_col_np):
+def auto_norm(data_set):
     """将数据归一化"""
     """目前的数据格式为[[1,2,3], [2, 3,4]]"""
-    assert isinstance(single_col_np, np.ndarray), "数据类型必须为numpy.ndarray"
-    min = single_col_np.T.min(1)
-    max = single_col_np.T.max(1)
-    new_col = (single_col_np - min)/(max-min)
+    assert isinstance(data_set, np.ndarray), "数据类型必须为numpy.ndarray"
+    min = data_set.T.min(1)
+    max = data_set.T.max(1)
+    new_col = (data_set - min)/(max-min)
     return new_col, min, (max-min)
 
 if __name__ == '__main__':
