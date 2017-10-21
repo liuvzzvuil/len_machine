@@ -7,6 +7,8 @@
 from math import log
 import numpy as np
 import collections
+import operator
+
 
 
 def calaShannonEnt(dataSet):
@@ -21,8 +23,10 @@ def calaShannonEnt(dataSet):
     :return:
     """
     num_item = len(dataSet)
-    np_num_item = np.array(dataSet)
-    item_num_list = np_num_item[:, 2]
+    # np_num_item = np.array(dataSet)
+    item_num_list = [x[-1] for x in dataSet]
+    # item_num_list = np_num_item[:, 2]
+    # print(item_num_list)
     count_dic = dict(collections.Counter(item_num_list))
     shannonEnt = 0.0
     list_prond = [x/num_item for x in count_dic.values()]
@@ -73,7 +77,7 @@ def chooseBestSetInLoop(dataSet):
             prob = len(comSpaDataSet)/float(len(dataSet))
             # print(calaShannonEnt(comSpaDataSet), comSpaDataSet)
             newEntropy += prob*calaShannonEnt(comSpaDataSet)
-            print(newEntropy, comSpaDataSet, i, value)
+            # print(newEntropy, comSpaDataSet, i, value)
         # 熵越小越好 为什么需要计算原始数据集的熵? 防止熵出现负数么? 最小就是0 (不会出现负数)
         # infoGain = raw_entropy - newEntropy
         # if infoGain > bestInfoGain:
@@ -85,6 +89,32 @@ def chooseBestSetInLoop(dataSet):
     return bestSpa
 
 
+def get_labels(data_list):
+    dataCount = collections.Counter(data_list)
+    return dataCount.most_common(1)[0][0]
+
+
+def createTree(dataSet, labels):
+    data_list = [x[-1] for x in dataSet]
+    data_set = set(data_list)
+    if len(dataSet) == 1:
+        return dataSet[0]
+    if len(dataSet) == 1:
+        # 当dataSet只有1个(遍历完全部特征时), 返回特征最多的
+        return get_labels(data_list)
+    bestFeat = chooseBestSetInLoop(dataSet)
+    bestLabel = labels[bestFeat]
+    choice_tree = {bestLabel: {}}
+    del(labels[bestFeat])
+    featValues = [x[bestFeat] for x in dataSet]
+    # print(featValues)
+    uniqueValue = set(featValues)
+    for value in uniqueValue:
+        subLabels = labels[:]
+        choice_tree[bestLabel][value] = createTree(splitDataSet(dataSet, bestFeat, value), subLabels)
+    return choice_tree
+
+
 if __name__ == '__main__':
     dataSet = [[1, 1, 2, 'y'], [1, 1, 3, 'y'], [0, 1, 2, 'n'], [1, 0, 3, 'n'], [1, 0, 2, 'n'], [1, 1, 0, 'm']]
     # print(calaShannonEnt(dataSet))
@@ -94,4 +124,7 @@ if __name__ == '__main__':
     # 亦即: 获取与所选特征联合出现的特征!!
     # [[1, 2, 'y'], [1, 3, 'y'], [0, 3, 'n'], [0, 2, 'n'], [1, 0, 'm']] ***0***  获取到的是原始集合中位置1值为1 的数据
     # [] ***2*** 可以看到, 最后一个特征值只有 0, 2, 3 没有1 , 所以没有符合特征的数据集  **NULL_VALUE**
-    print(chooseBestSetInLoop(dataSet))
+    # print(chooseBestSetInLoop(dataSet))
+    # labels 只要是可迭代对象即可, 元素与特征对应
+    print(createTree(dataSet, ['A', 'B', 'C']))
+    # get_labels(['y', 'y', 'n', 'n', 'n'])
