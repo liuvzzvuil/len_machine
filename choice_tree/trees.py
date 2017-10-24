@@ -5,10 +5,9 @@
 """
 
 from math import log
-import numpy as np
 import collections
-import operator
-
+import pickle
+import traceback
 
 
 def calaShannonEnt(dataSet):
@@ -97,9 +96,9 @@ def get_labels(data_list):
 def createTree(dataSet, labels):
     data_list = [x[-1] for x in dataSet]
     data_set = set(data_list)
-    if len(dataSet) == 1:
-        return dataSet[0]
-    if len(dataSet) == 1:
+    if len(data_set) == 1:
+        return data_list[0]
+    if len(dataSet[0]) == 1:
         # 当dataSet只有1个(遍历完全部特征时), 返回特征最多的
         return get_labels(data_list)
     bestFeat = chooseBestSetInLoop(dataSet)
@@ -115,6 +114,38 @@ def createTree(dataSet, labels):
     return choice_tree
 
 
+def main(tree, featLables, testVec):
+    root = list(tree.keys())[0]
+    subDict = tree[root]
+    featIndex = featLables.index(root)
+    for key in subDict.keys():
+        if testVec[featIndex] == key:
+            if isinstance(subDict[key], dict):
+                classLabel = main(subDict[key], featLables, testVec)
+            else:
+                classLabel = subDict[key]
+    return classLabel
+
+
+def saveTree(tree, fileName):
+    try:
+        with open(fileName, 'wb') as f:
+            pickle.dump(tree, f)
+    except:
+        error = traceback.format_exc()
+        print(error)
+
+
+def readTree(fileName):
+    try:
+        with open(fileName, 'rb') as f:
+            tree = pickle.load(f)
+        return tree
+    except:
+        error = traceback.format_exc()
+        print(error)
+
+
 if __name__ == '__main__':
     dataSet = [[1, 1, 2, 'y'], [1, 1, 3, 'y'], [0, 1, 2, 'n'], [1, 0, 3, 'n'], [1, 0, 2, 'n'], [1, 1, 0, 'm']]
     # print(calaShannonEnt(dataSet))
@@ -126,5 +157,23 @@ if __name__ == '__main__':
     # [] ***2*** 可以看到, 最后一个特征值只有 0, 2, 3 没有1 , 所以没有符合特征的数据集  **NULL_VALUE**
     # print(chooseBestSetInLoop(dataSet))
     # labels 只要是可迭代对象即可, 元素与特征对应
-    print(createTree(dataSet, ['A', 'B', 'C']))
+    # labels = ['A', 'B', 'C']
+    # print(createTree(dataSet, labels))
     # get_labels(['y', 'y', 'n', 'n', 'n'])
+    """
+    labels = ['A', 'B', 'C']
+    tree = createTree(dataSet, labels)
+    saveTree(tree, 'hello.tree')
+    labels = ['A', 'B', 'C']
+    # 注意, 输入的测试值 需要符合定义数据时的规则, 例如, 第一,二个特征只有0, 1, 第三个0, 2, 3
+    tree = readTree('hello.tree')
+    if tree:
+        print(main(tree, labels, [1, 0, 0]))
+    """
+    with open('lenses.txt')as f:
+        lens = [lenx.strip().split('\t') for lenx in f.readlines()]
+        print(lens)
+
+    labels = ['age', 'pre', 'ast', 'tear']
+    tree = createTree(lens, labels)
+    saveTree(tree, 'forshow')
