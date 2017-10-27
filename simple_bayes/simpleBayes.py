@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import math
 
 def get_data():
     text = ['I fuck and garbage your dog',
@@ -72,8 +73,11 @@ def trainNB0(trainMatrix, trainCategory):
     p0Vect = p0Num/p0Denom
     return p0Vect, p1Vect, p_label_equal_1
 
-def getP():
-    pass
+def getP(pData):
+    xx = [math.log(x) for x in pData if x > 0 ]
+    yy = sum(xx)
+    print(int(math.e**yy))
+
 
 if __name__ == "__main__":
     split_data, lable = get_data()
@@ -86,5 +90,5 @@ if __name__ == "__main__":
     print(list_of_tran)
     p0, p1, pA = trainNB0(list_of_tran, lable)
     print(pA, p0, p1)
-
+    getP(p0)
 
