@@ -69,8 +69,13 @@ def trainNB0(trainMatrix, trainCategory):
         else:
             p0Num += trainMatrix[i]
             p0Denom += sum(trainMatrix[i])
+
     p1Vect = p1Num/p1Denom
+    p1 = np.where(p1Vect == 0, np.e, p1Vect)
     p0Vect = p0Num/p0Denom
+    p0 = np.where(p0Vect == 0, np.e, p0Vect)
+    p1Vect = np.log(p1)
+    p0Vect = np.log(p0)
     return p0Vect, p1Vect, p_label_equal_1
 
 def getP(pData):
