@@ -78,10 +78,19 @@ def trainNB0(trainMatrix, trainCategory):
     p0Vect = np.log(p0)
     return p0Vect, p1Vect, p_label_equal_1
 
-def getP(pData):
-    xx = [math.log(x) for x in pData if x > 0 ]
-    yy = sum(xx)
-    print(int(math.e**yy))
+def classifyNB(vec2classify, p0Vec, p1Vec, pClass1):
+
+    p0 = [math.log(x) for x in p0Vec if x > 0 ]
+    p1 = [math.log(x) for x in p1Vec if x > 0]
+    p0 = sum(p0 * vec2classify) + np.log(pClass1)
+    p1 = sum(p1 * vec2classify) + np.log(1-pClass1)
+    if p1 > p0:
+        return 1
+    else:
+        return 0
+
+def self_test():
+    list_data, list_label = get_data()
 
 
 if __name__ == "__main__":
@@ -94,6 +103,7 @@ if __name__ == "__main__":
         list_of_tran.append((word2Vec(unique_data, i)))
     print(list_of_tran)
     p0, p1, pA = trainNB0(list_of_tran, lable)
-    print(pA, p0, p1)
-    getP(p0)
+    # print(pA, p0, p1)
+    testEntry = ['love', 'my', 'dalmation']
+    thiDoc = np.array()
 
